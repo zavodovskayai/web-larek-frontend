@@ -49,7 +49,9 @@ export interface ICard {
     category: string; // Категория товара
     image: string; // URL изображения товара
     template: HTMLTemplateElement; // Шаблон карточки
-    onClick: (product: IProduct) => void; // Обработчик клика по карточке
+    addToCartButton: HTMLButtonElement; // Кнопка "В корзину"
+    render(): HTMLElement; // Метод для рендеринга карточки
+    setAddToCartHandler(handler: () => void): void; // Метод для обработки клика по кнопке "В корзину"
 };
 
 /**
@@ -98,6 +100,7 @@ export interface IOrderForm {
     render(): void; // Метод для рендеринга формы
     validate(): boolean; // Метод для валидации формы
     submit(): void; // Метод для отправки формы
+    setNextHandler(handler: () => void): void; // Метод для обработки клика по кнопке "Далее"
 };
 
 /**

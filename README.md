@@ -129,7 +129,7 @@ Presenter вызывает методы Model для получения данн
 - (+) close(): void  
 - (+) render(): void  
 
-4. Класс ICard - необходим для отображения карточек. Тип связи: композиция с DOM-элементами, ассоциация с IGallery.
+4. Класс ICard - необходим для отображения карточек. Тип связи: композиция с DOM-элементами, ассоциация с IGallery и IBacket.
 
 Поля:
 - (#) id: string  
@@ -138,7 +138,7 @@ Presenter вызывает методы Model для получения данн
 - (+) category: string  
 - (+) image: string  
 - (+) template: HTMLTemplateElement  
-- (+) onClick: (product: IProduct) => void  
+- (-) addToCartButton: HTMLButtonElement 
 
 Методы:
 - (+) constructor(template: HTMLTemplateElement, data: IProduct, onClick: (product: IProduct) => void)  
@@ -175,12 +175,14 @@ Presenter вызывает методы Model для получения данн
 Поля:
 - (-) paymentMethod: 'Онлайн' | 'При получении' 
 - (-) deliveryAddress: string  
+- (-) nextButton: HTMLButtonElement
 
 Методы:
 - (+) constructor()  
 - (+) render(): void  
 - (+) validate(): boolean  
 - (+) submit(): void  
+- (+) setNextHandler(handler: () => void): void
 
 8. Класс IContactsForm - необходим для формы заполнения контактных данных. Тип связи: композиция с Modal,ассоциация с EventEmitter.
 
@@ -222,16 +224,16 @@ Presenter вызывает методы Model для получения данн
 1. Класс EventEmitter - отвечайт за события. Тип связи: ассоциация с классами AppData, View.
 
 Поля: 
-- (-) _events: Map<string | RegExp, Set<Function>>  
+- (-) _events: Map 
 
 Методы:
 - (+) constructor()  
-- (+) on<T extends object>(event: string | RegExp, callback: (data: T) => void): void  
-- (+) off(event: string | RegExp, callback: Function): void  
-- (+) emit<T extends object>(event: string, data?: T): void  
-- (+) onAll(callback: (event: { eventName: string, data: unknown }) => void): void  
+- (+) on: void  
+- (+) off: void  
+- (+) emit: void  
+- (+) onAll: void  
 - (+) offAll(): void  
-- (+) trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void  
+- (+) trigger: (data: T) => void  
 
 2. Класс Api - отвечает за общую часть, связанную с API. Тип связи: ассоциация с AppData.
 
@@ -241,9 +243,9 @@ Presenter вызывает методы Model для получения данн
 
 Методы:
 - (+) constructor(baseUrl: string, options?: RequestInit)  
-- (-) handleResponse(response: Response): Promise<object>  
-- (+) get(uri: string): Promise<object>  
-- (+) post(uri: string, data: object, method: string): Promise<object> .
+- (-) handleResponse(response: Response): Promise 
+- (+) get(uri: string): Promise 
+- (+) post(uri: string, data: object, method: string): Promise
 
 
 3. Класс AppPresenter - отвечает за визуал. Тип связи: ассоциация с AppData, EventEmitter, View.
