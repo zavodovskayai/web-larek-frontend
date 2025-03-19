@@ -243,7 +243,8 @@ Presenter вызывает методы Model для получения данн
 - (+) constructor(baseUrl: string, options?: RequestInit)  
 - (-) handleResponse(response: Response): Promise<object>  
 - (+) get(uri: string): Promise<object>  
-- (+) post(uri: string, data: object, method: string): Promise<object> 
+- (+) post(uri: string, data: object, method: string): Promise<object> .
+
 
 3. Класс AppPresenter - отвечает за визуал. Тип связи: ассоциация с AppData, EventEmitter, View.
 plaintext
