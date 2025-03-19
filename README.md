@@ -47,21 +47,21 @@ Presenter вызывает методы Model для получения данн
 
 Поля:
 - (+) basket: BasketItem[]  
-- (+) products: IProduct[]  
-- (+) selectedProduct: IProduct | null  
-- (#) events: IEvents
+- (+) products: Product[]  
+- (+) selectedProduct: Product | null  
+- (#) events: Events
 
 Методы:
 - (+) constructor(api: Api, events: EventEmitter)  
-- (+) getCard(): IProduct[]  
+- (+) getCard(): Product[]  
 - (+) addToBasket(item: BasketItem): void  
 - (+) removeFromBasket(id: string): void  
 - (+) getBasket(): BasketItem[]  
 - (+) selectionPaymentMethod(method: PaymentMethod)
-- (+) getSelectedProduct(): IProduct | null 
+- (+) getSelectedProduct(): Product | null 
 - (+) clearBacket() 
 
-2. Класс IProduct - необходим для описания товаров. Тип связи: ассоциация с классами AppData, ICard.
+2. Класс Product - необходим для описания товаров. Тип связи: ассоциация с классами AppData, Card.
 
 Поля:
 - (#) id: string  
@@ -85,7 +85,7 @@ Presenter вызывает методы Model для получения данн
 Методы:
 - (+) constructor(id: string, title: string, price: number, quantity: number)  
 
-4. Класс IOrder - необходим для отображения заказа. Тип связи: ассоциация с классами AppData, IOrderForm.
+4. Класс Order - необходим для отображения заказа. Тип связи: ассоциация с классами AppData, OrderForm.
 
 Поля: 
 - (#) id: string  
@@ -98,7 +98,7 @@ Presenter вызывает методы Model для получения данн
 - (+) constructor(id: string, items: BasketItem[], total: number | null, paymentMethod: 'Онлайн' | 'При получении', deliveryAddress: string)  
 
 ### Слой View
-1. Класс IComponent (абстрактный) - необходим для отображения базовых элементов и их создание для пользовательского интерфейса. Тип связи: ассоциация с DOM-элементами.
+1. Класс Component (абстрактный) - необходим для отображения базовых элементов и их создание для пользовательского интерфейса. Тип связи: ассоциация с DOM-элементами.
 
 Поля:
 - (-) element: HTMLElement  
@@ -117,7 +117,7 @@ Presenter вызывает методы Model для получения данн
 
 Поля и методы наследуются от класса Component. В отличие от родителя можно создать его экзепляр (в абстрактных классах нельзя создать его экземпляр)
 
-3. Класс IModal - отвечает за работы с модальными окнами. Тип связи: композиция с классами IProduct, IBasket, IOrderForm.
+3. Класс Modal - отвечает за работы с модальными окнами. Тип связи: композиция с классами Product, Basket, OrderForm.
 
 Поля: 
 - (-) title: string  
@@ -129,7 +129,7 @@ Presenter вызывает методы Model для получения данн
 - (+) close(): void  
 - (+) render(): void  
 
-4. Класс ICard - необходим для отображения карточек. Тип связи: композиция с DOM-элементами, ассоциация с IGallery и IBacket.
+4. Класс Card - необходим для отображения карточек. Тип связи: композиция с DOM-элементами, ассоциация с Gallery и Backet.
 
 Поля:
 - (#) id: string  
@@ -141,21 +141,21 @@ Presenter вызывает методы Model для получения данн
 - (-) addToCartButton: HTMLButtonElement 
 
 Методы:
-- (+) constructor(template: HTMLTemplateElement, data: IProduct, onClick: (product: IProduct) => void)  
+- (+) constructor(template: HTMLTemplateElement, data: Product, onClick: (product: Product) => void)  
 - (+) render(): HTMLElement  
 - (+) setDeleteButtonHandler(handler: () => void): void  
 
-5. Класс IGallery - отвечает за галлерею картинок на главном экране. Тип связи: агрегация с классами ICard, ассоциация с AppData.
+5. Класс Gallery - отвечает за галлерею картинок на главном экране. Тип связи: агрегация с классами Card, ассоциация с AppData.
 
 Поля:
-- (-) products: IProduct[]  
+- (-) products: Product[]  
 
 Методы:
-- (+) constructor(products: IProduct[])  
+- (+) constructor(products: Product[])  
 - (+) render(): void  
-- (+) onProductClick(product: IProduct): void  
+- (+) onProductClick(product: Product): void  
 
-6. Класс IBasket - отвечает за отображение корзины. Тип связи: композиция с классами BasketItem, ассоциация с AppData.
+6. Класс Basket - отвечает за отображение корзины. Тип связи: композиция с классами BasketItem, ассоциация с AppData.
 
 Поля:
 - (-) items: BasketItem[]  
@@ -170,7 +170,7 @@ Presenter вызывает методы Model для получения данн
 - (+) render(): void  
 - (+) setCheckoutHandler(handler: () => void): void  
 
-7. Класс IOrderForm - отображает форму заказа. Тип связи: ассоциация с IOrder.
+7. Класс OrderForm - отображает форму заказа. Тип связи: ассоциация с Order.
 
 Поля:
 - (-) paymentMethod: 'Онлайн' | 'При получении' 
@@ -184,7 +184,7 @@ Presenter вызывает методы Model для получения данн
 - (+) submit(): void  
 - (+) setNextHandler(handler: () => void): void
 
-8. Класс IContactsForm - необходим для формы заполнения контактных данных. Тип связи: композиция с Modal,ассоциация с EventEmitter.
+8. Класс ContactsForm - необходим для формы заполнения контактных данных. Тип связи: композиция с Modal,ассоциация с EventEmitter.
 
 Поля:
 - (-) emailInput: HTMLInputElement
@@ -199,7 +199,7 @@ Presenter вызывает методы Model для получения данн
 - (+) getFormData(): { email: string; phone: string }
 - (+) onSubmit(handler: (data: { email: string; phone: string }) => void): void
 
-9. Класс IOrderSuccess. Тип связи: ассоциация с IOrder.
+9. Класс OrderSuccess. Тип связи: ассоциация с Order.
 
 Поля:
 - (-) total: number  
@@ -208,7 +208,7 @@ Presenter вызывает методы Model для получения данн
 - (+) constructor(total: number)  
 - (+) render(): void 
 
-10. Класс IHeader - отображает элементы шапки. Тип связи: композиция с DOM-элементами.
+10. Класс Header - отображает элементы шапки. Тип связи: композиция с DOM-элементами.
 
 Поля:
 - (-) logo: HTMLElement  
