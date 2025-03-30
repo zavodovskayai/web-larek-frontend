@@ -72,9 +72,11 @@ Presenter вызывает методы Model для получения данн
 - (+) image: string  
 
 Методы:
-- (+) constructor(id: string, title: string, description: string, price: number | null, category: string, image: string)  
+- (+) constructor(id: string, title: string, description: string, price: number | null, category: string, image: string) 
 
-3. Класс BasketItem - необходим для отображения элементов в корзине. Тип связи: композиция с классом IBasket.
+**Важно:** Методы класса `Product` не вызываются напрямую в представлениях. Вместо этого, взаимодействие с классом `Product` осуществляется через слой `Presenter`, что позволяет сохранить независимость между слоями Model и View.
+
+3. Класс BasketItem - необходим для отображения элементов в корзине. Тип связи: композиция с классом Basket.
 
 Поля:
 - (#) id: string  
@@ -97,6 +99,8 @@ Presenter вызывает методы Model для получения данн
 Методы:
 - (+) constructor(id: string, items: BasketItem[], total: number | null, paymentMethod: 'Онлайн' | 'При получении', deliveryAddress: string)  
 
+ **Важно:** Методы класса `Order` не вызываются напрямую в представлениях. Вместо этого, взаимодействие с классом `Order` осуществляется через слой `Presenter`, что позволяет сохранить независимость между слоями Model и View.
+
 ### Слой View
 1. Класс Component (абстрактный) - необходим для отображения базовых элементов и их создание для пользовательского интерфейса. Тип связи: ассоциация с DOM-элементами.
 
@@ -113,11 +117,11 @@ Presenter вызывает методы Model для получения данн
 - (+) setVisible(isVisible: boolean): void  
 - (+) render(): void  
 
-2. Класс View (базовый) - расширение класса Component полем events. Тип связи: наследование от IComponent, ассоциация с EventEmitter.
+2. Класс View (базовый) - расширение класса Component полем events. Тип связи: наследование от Component, ассоциация с EventEmitter.
 
 Поля и методы наследуются от класса Component. В отличие от родителя можно создать его экзепляр (в абстрактных классах нельзя создать его экземпляр)
 
-3. Класс Modal - отвечает за работы с модальными окнами. Тип связи: композиция с классами Product, Basket, OrderForm.
+3. Класс Modal (абстрактный) - отвечает за работы с модальными окнами. Тип связи: ассоциация с DOM-элементами.
 
 Поля: 
 - (-) title: string  
@@ -129,7 +133,13 @@ Presenter вызывает методы Model для получения данн
 - (+) close(): void  
 - (+) render(): void  
 
-4. Класс Card - необходим для отображения карточек. Тип связи: композиция с DOM-элементами, ассоциация с Gallery и Backet.
+ **Важно:** Класс `Modal` не зависит от контента, который в нём отображается. Он может отображать любой контент, будь то карточка товара, корзина или форма заказа. 
+
+Классы, предоставляющие контент для модального окна (например, `Card`, `Basket`, `OrderForm`), также независимы от `Modal`. Они могут использоваться в других частях приложения, например, на главной странице или в других представлениях.
+
+Взаимодействие между `Modal` и контентом осуществляется через слой `Presenter`. Именно `Presenter` отвечает за создание экземпляра `Modal`, передачу ему контента и управление его поведением. Это позволяет сохранить независимость между слоями Model и View.
+
+4. Класс Card - необходим для отображения карточек. Тип связи: композиция с DOM-элементами.
 
 Поля:
 - (#) id: string  
@@ -145,44 +155,66 @@ Presenter вызывает методы Model для получения данн
 - (+) render(): HTMLElement  
 - (+) setDeleteButtonHandler(handler: () => void): void  
 
+**Важно:** Класс `Card` является независимым и универсальным. Его реализация позволяет использовать карточки товаров в различных контекстах, например, в галерее (`Gallery`) или корзине (`Basket`). При этом классы `Gallery` и `Basket` не зависят от конкретного шаблона карточки и могут работать с карточками любых структур.
+
+Взаимодействие между `Card` и `Gallery` или `Basket` осуществляется через слой `Presenter`. Это позволяет сохранить гибкость и независимость классов, а также упрощает их модификацию и переиспользование.
+
 5. Класс Gallery - отвечает за галлерею картинок на главном экране. Тип связи: агрегация с классами Card, ассоциация с AppData.
 
 Поля:
-- (-) products: Product[]  
+- (-) container: HTMLElement - HTML-элемент, в который вставляется разметка карточек товаров.  
 
 Методы:
 - (+) constructor(products: Product[])  
 - (+) render(): void  
 - (+) onProductClick(product: Product): void  
 
+**Важно:** Класс `Gallery` не хранит состояние данных (`products`). Список товаров передаётся в метод `render` в качестве параметра. Это позволяет классу `Gallery` быть независимым от данных и сосредоточиться исключительно на отображении.
+
+Состояние данных (например, список товаров) хранится в классе модели данных (`AppData`). Взаимодействие между `Gallery` и `AppData` осуществляется через слой `Presenter`. Например:
+- Пользователь взаимодействует с карточкой товара в галерее.
+- `Gallery` генерирует событие, которое обрабатывается в `Presenter`.
+- `Presenter` вызывает методы модели данных (`AppData`) для обработки события.
+- После обработки данных `Presenter` вызывает метод `render` класса `Gallery`, передавая обновлённый список товаров.
+
 6. Класс Basket - отвечает за отображение корзины. Тип связи: композиция с классами BasketItem, ассоциация с AppData.
 
 Поля:
-- (-) items: BasketItem[]  
-- (-) total: number  
-- (-) checkoutButton: HTMLElement  
+- (-) container: HTMLElement - HTML-элемент, в который вставляется разметка элементов корзины.
+- (-) totalElement: HTMLElement - HTML-элемент для отображения общей стоимости товаров.
+- (-) checkoutButton: HTMLElement - HTML-элемент кнопки оформления заказа. 
 
 Методы:
-- (+) constructor(items: BasketItem[], checkoutButton: HTMLElement)  
-- (+) addItem(item: BasketItem): void  
-- (+) removeItem(itemId: string): void  
-- (+) calculateTotal(): number  
-- (+) render(): void  
-- (+) setCheckoutHandler(handler: () => void): void  
+- (+) constructor(container: HTMLElement, totalElement: HTMLElement, checkoutButton: HTMLElement)  
+- (+) render(items: BasketItem[]): void  
+- (+) setCheckoutHandler(handler: () => void): void 
+
+**Важно:** Класс `Basket` не хранит состояние данных корзины (например, список товаров или общую стоимость). Эти данные хранятся в модели данных (`AppData`). Класс `Basket` отвечает только за отображение данных, которые передаются ему через метод `render`.
+
+Функционал добавления, удаления товаров из корзины и расчёта общей стоимости реализуется в методах модели данных (`AppData`). Например:
+- Пользователь нажимает кнопку удаления товара.
+- Класс `Basket` генерирует событие через метод `emit`.
+- Событие обрабатывается в `Presenter`, который вызывает метод модели данных для удаления товара.
+- После обновления данных модель передаёт обновлённый список товаров в метод `render` класса `Basket` для отображения.
 
 7. Класс OrderForm - отображает форму заказа. Тип связи: ассоциация с Order.
 
 Поля:
-- (-) paymentMethod: 'Онлайн' | 'При получении' 
-- (-) deliveryAddress: string  
-- (-) nextButton: HTMLButtonElement
+- (-) container: HTMLElement - HTML-элемент, в который вставляется разметка формы заказа.
+- (-) paymentButtons: NodeListOf<HTMLButtonElement> - Кнопки выбора способа оплаты.
+- (-) addressInput: HTMLInputElement - Поле ввода адреса доставки.
+- (-) nextButton: HTMLButtonElement - Кнопка для перехода к следующему шагу.
 
 Методы:
-- (+) constructor()  
+- (+) constructor(container: HTMLElement, paymentButtons: NodeListOf<HTMLButtonElement>, addressInput: HTMLInputElement, nextButton: HTMLButtonElement)  
 - (+) render(): void  
 - (+) validate(): boolean  
-- (+) submit(): void  
-- (+) setNextHandler(handler: () => void): void
+- (+) setNextHandler(handler: () => void): void  
+
+**Важно:** Класс `OrderForm` не хранит данные о способе оплаты или адресе доставки. Эти данные передаются в модель через слой `Presenter`. Например:
+- Пользователь выбирает способ оплаты и вводит адрес доставки.
+- Класс `OrderForm` генерирует событие через метод `emit`.
+- Событие обрабатывается в `Presenter`, который вызывает метод модели для сохранения данных.
 
 8. Класс ContactsForm - необходим для формы заполнения контактных данных. Тип связи: композиция с Modal,ассоциация с EventEmitter.
 
@@ -190,23 +222,35 @@ Presenter вызывает методы Model для получения данн
 - (-) emailInput: HTMLInputElement
 - (-) phoneInput: HTMLInputElement
 - (-) submitButton: HTMLButtonElement
-- (-) formElement: HTMLFormElement
+- (-) container: HTMLElement - HTML-элемент, в который вставляется разметка формы.
 
 Методы:
-- (+) constructor(template: HTMLTemplateElement)
-- (+) render(): HTMLElement
-- (+) validate(): boolean
-- (+) getFormData(): { email: string; phone: string }
-- (+) onSubmit(handler: (data: { email: string; phone: string }) => void): void
+- (+) constructor(container: HTMLElement, emailInput: HTMLInputElement, phoneInput: HTMLInputElement, submitButton: HTMLButtonElement)  
+- (+) render(): void  
+- (+) validate(): boolean  
+- (+) getFormData(): { email: string; phone: string }  
+- (+) onSubmit(handler: (data: { email: string; phone: string }) => void): void  
+
+**Важно:** Класс `ContactsForm` не хранит данные о введённых пользователем контактных данных. Эти данные передаются в модель через слой `Presenter`. Например:
+- Пользователь заполняет форму и нажимает кнопку отправки.
+- Класс `ContactsForm` генерирует событие через метод `emit`.
+- Событие обрабатывается в `Presenter`, который вызывает метод модели для сохранения данных.
 
 9. Класс OrderSuccess. Тип связи: ассоциация с Order.
 
 Поля:
-- (-) total: number  
+- (-) container: HTMLElement - HTML-элемент, в который вставляется разметка успешного оформления заказа.
+- (-) closeButton: HTMLButtonElement - Кнопка для закрытия сообщения об успешном заказе.
 
 Методы:
-- (+) constructor(total: number)  
-- (+) render(): void 
+- (+) constructor(container: HTMLElement, closeButton: HTMLButtonElement)  
+- (+) render(total: number): void 
+
+**Важно:** Класс `OrderSuccess` не хранит состояние данных, таких как общая сумма заказа. Вместо этого, он принимает сумму заказа в качестве параметра метода `render`. Это позволяет классу `OrderSuccess` быть универсальным и отображать информацию о заказе, передавая необходимые данные из модели через слой `Presenter`.
+
+Взаимодействие между `OrderSuccess` и моделью данных осуществляется через `Presenter`. Например:
+- После успешного оформления заказа, `Presenter` вызывает метод `render` класса `OrderSuccess`, передавая общую сумму заказа.
+- Класс `OrderSuccess` отображает сообщение об успешном заказе с указанной суммой.
 
 10. Класс Header - отображает элементы шапки. Тип связи: композиция с DOM-элементами.
 
