@@ -254,14 +254,14 @@ Base (Базовые классы):
 
 Методы:
 - (-) constructor(baseUrl: string, options: RequestInit = {})
-- (#) handleResponse(response: Response): Promise<object> 
+- (#) handleResponse(response: Response): Promise
 - (+) get(uri: string)
 - (+) post(uri: string, data: object, method: ApiPostMethods = 'POST')
 
 Связи:
 - ассоциация с LarekAPI
 
-12. Абстрактный класс Component<T>
+12. Абстрактный класс Component
 
 Поля:
 - (#) container: HTMLElement
@@ -273,7 +273,7 @@ Base (Базовые классы):
 - (#) setHidden(element: HTMLElement)
 - (#) setVisible(element: HTMLElement)
 - (#) setImage(element: HTMLImageElement, src: string, alt?: string)
-- (+) render(data?: Partial<T>): HTMLElement
+- (+) render(data?: Partial): HTMLElement
 
 Связи:
 - композиция со всеми классами слоя View
@@ -281,27 +281,27 @@ Base (Базовые классы):
 13. Класс EventEmitter
 
 Поля:
-- (-) _events: Map<EventName, Set<Subscriber>>
+- (-) _events: Map<>
 
 Методы:
 - (-) constructor()
-- (+) on<T extends object>(eventName: EventName, callback: (event: T) => void)
+- (+) on(eventName: EventName, callback: (event: T) => void)
 - (+) off(eventName: EventName, callback: Subscriber)
-- (+) emit<T extends object>(eventName: string, data?: T)
+- (+) emit(eventName: string, data?: T)
 - (+) onAll(callback: (event: EmitterEvent) => void)
 - (+) offAll()
-- (+) trigger<T extends object>(eventName: string, context?: Partial<T>)
+- (+) trigger(eventName: string, context?: Partial)
 
 Связи:
 - агрегация с AppData, Page, Modal и т.д.
 
-14. Абстрактный класс Model<T>
+14. Абстрактный класс Model
 
 Поля:
 - (#) events: IEvents
 
 Методы:
-- (#) constructor(data: Partial<T>, protected events: IEvents)
+- (#) constructor(data: Partial, protected events: IEvents)
 - (+) emitChanges(event: string, payload?: object)
 
 Связи:
