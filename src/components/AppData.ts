@@ -1,18 +1,6 @@
 import {Model} from "./base/model";
 import {FormError, IAppData, IProduct, IOrder, IOrderFormEmailPhone, PaymentMethods } from "../types";
-
-export type CatalogChangeEvent = {
-  catalog: Product[];
-}
-
-export class Product extends Model<IProduct> implements IProduct {
-  description: string;
-  id: string;
-  image: string;
-  title: string;
-  price: number | null;
-  category: string;
-}
+import {Product} from './Product'
 
 export class AppData extends Model<IAppData> {
   catalog: IProduct[] = [];

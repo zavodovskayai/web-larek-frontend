@@ -1,6 +1,6 @@
 import { Form } from "./common/Form";
 import { IOrderFormDelivery} from "../types";
-import { IEvents } from "./base/events";
+import { IEvents } from "../types/index";
 
 export class OrderAddress extends Form<IOrderFormDelivery> {
   // Метод оплаты - это контейнер, кнопка оплаты - это кнопка, адрес доставки - ввод пользователем 

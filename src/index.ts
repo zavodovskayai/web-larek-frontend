@@ -2,16 +2,18 @@ import './scss/styles.scss';
 import {LarekAPI} from "./components/LarekAPI";
 import {API_URL, CDN_URL} from "./utils/constants";
 import {EventEmitter} from "./components/base/events";
-import {AppData, CatalogChangeEvent, Product} from "./components/AppData";
+import {AppData} from "./components/AppData";
+import {Product} from './components/Product'
 import {Page} from "./components/Page";
 import {cloneTemplate, ensureElement} from "./utils/utils";
 import {Modal} from "./components/common/Modal";
-import {BasketCard, Card} from './components/Card';
+import {Card} from './components/Card';
+import {BasketCard} from './components/BasketCard';
 import {Basket} from './components/common/Basket';
 import {OrderAddress} from './components/OrderAddress';
 import {Success} from './components/common/Success';
 import {OrderContacts} from './components/OrderContacts';
-import {IOrderFormEmailPhone, IOrderFormDelivery} from './types';
+import {IOrderFormEmailPhone, IOrderFormDelivery, CatalogChangeEvent} from './types';
 
 // Инициализация событий и API
 const events = new EventEmitter();
